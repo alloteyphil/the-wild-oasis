@@ -11,8 +11,7 @@ export default defineConfig(({ mode }) => {
     define: {
       // Define environment variables that you want to access in your application code
       "process.env.REACT_APP_API_KEY": JSON.stringify(
-        // eslint-disable-next-line no-undef
-        process.env.SUPABASE_API_KEY
+        process.env.VITE_SUPABASE_API_KEY
       ),
     },
   };
