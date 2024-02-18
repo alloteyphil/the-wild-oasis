@@ -9,10 +9,11 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [react()],
     define: {
-      // Define environment variables that you want to access in your application code
-      "import.meta.env.VITE_SUPABASE_API_KEY": JSON.stringify(
-        import.meta.env.VITE_SUPABASE_API_KEY
+      "process.env.REACT_APP_API_KEY": JSON.stringify(
+        // eslint-disable-next-line no-undef
+        process.env.REACT_APP_API_KEY
       ),
+      // Add other environment variables here as needed
     },
   };
 });
