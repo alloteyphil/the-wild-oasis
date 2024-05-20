@@ -1,3 +1,4 @@
+import Uploader from "../data/Uploader.jsx";
 import DashboardFilter from "../features/dashboard/DashboardFilter.jsx";
 import DashboardLayout from "../features/dashboard/DashboardLayout.jsx";
 import Heading from "../ui/Heading";
@@ -9,6 +10,7 @@ function Dashboard() {
       <Row type="horizontal">
         <Heading as="h1">Dashboard</Heading>
         <DashboardFilter />
+        <Uploader />
       </Row>
       <DashboardLayout />
     </>
