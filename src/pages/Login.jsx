@@ -12,6 +12,8 @@ const LoginLayout = styled.main`
   gap: 3.2rem;
   background-color: var(--color-grey-50);
   position: relative;
+  @media only screen and (max-width: 768px) {
+  }
 `;
 
 const LoginDetails = styled.div`
@@ -35,8 +37,8 @@ function Login() {
       <Heading as="h4">Log in to your account</Heading>
       <LoginForm />
       <LoginDetails>
-        <LoginEmail>Email: wibih77293@fna6.com</LoginEmail>
-        <LoginPassword>Password: purple1234</LoginPassword>
+        <LoginEmail>Demo email: wibih77293@fna6.com</LoginEmail>
+        <LoginPassword>Demo password: purple1234</LoginPassword>
       </LoginDetails>
     </LoginLayout>
   );
