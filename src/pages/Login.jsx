@@ -21,7 +21,7 @@ const LoginDetails = styled.div`
   position: absolute;
   top: 0;
   right: 0;
-  width: 300px;
+  width: 310px;
   padding: 10px;
   gap: 50px;
 `;
