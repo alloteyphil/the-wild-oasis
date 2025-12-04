@@ -12,23 +12,57 @@ const LoginLayout = styled.main`
   gap: 3.2rem;
   background-color: var(--color-grey-50);
   position: relative;
-  @media only screen and (max-width: 768px) {
+  padding: 2rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    padding: 2rem 1.6rem;
+    gap: 2.4rem;
+  }
+
+  @media (min-width: 769px) and (max-width: 1024px) {
+    grid-template-columns: minmax(0, 40rem);
+    padding: 2rem;
   }
 `;
 
 const LoginDetails = styled.div`
-  border: 1px solid white;
+  border: 2px solid var(--color-brand-600);
   position: absolute;
   top: 0;
   right: 0;
   width: 310px;
-  padding: 10px;
-  gap: 50px;
+  padding: 1.2rem;
+  gap: 0.8rem;
+  background-color: var(--color-brand-50);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-md);
+
+  @media (max-width: 768px) {
+    position: static;
+    width: 100%;
+    margin-top: 2rem;
+    border-radius: var(--border-radius-md);
+  }
+
+  @media (min-width: 769px) and (max-width: 1024px) {
+    width: 280px;
+    padding: 1rem;
+  }
 `;
 
-const LoginEmail = styled.p``;
+const LoginEmail = styled.p`
+  font-size: 1.3rem;
+  margin-bottom: 0.6rem;
+  color: var(--color-brand-900);
+  font-weight: 600;
+`;
 
-const LoginPassword = styled.p``;
+const LoginPassword = styled.p`
+  font-size: 1.3rem;
+  color: var(--color-brand-900);
+  font-weight: 600;
+`;
 
 function Login() {
   return (

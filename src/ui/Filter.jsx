@@ -18,8 +18,8 @@ const FilterButton = styled.button`
   ${(props) =>
     props.active &&
     css`
-      background-color: var(--color-brand-600);
-      color: var(--color-brand-50);
+      background-color: #312e81;
+      color: #ffffff;
     `}
 
   border-radius: var(--border-radius-sm);
@@ -27,11 +27,15 @@ const FilterButton = styled.button`
   font-size: 1.4rem;
   /* To give the same height as select */
   padding: 0.44rem 0.8rem;
-  transition: all 0.3s;
+  transition: all 0.2s ease-in-out;
 
   &:hover:not(:disabled) {
-    background-color: var(--color-brand-600);
-    color: var(--color-brand-50);
+    background-color: #312e81;
+    color: #ffffff;
+  }
+
+  &:active:not(:disabled) {
+    background-color: #4338ca;
   }
 `;
 

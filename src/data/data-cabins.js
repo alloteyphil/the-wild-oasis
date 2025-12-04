@@ -1,6 +1,5 @@
-import { supabaseUrl } from "../services/supabase";
-
-const imageUrl = `${supabaseUrl}/storage/v1/object/public/cabin-images/`;
+// Image URLs will be set when cabins are created with Convex file storage
+const imageUrl = "/src/data/cabins/";
 
 export const cabins = [
   {

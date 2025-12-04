@@ -11,13 +11,22 @@ const FileInput = styled.input.attrs({ type: "file" })`
     margin-right: 1.2rem;
     border-radius: var(--border-radius-sm);
     border: none;
-    color: var(--color-brand-50);
-    background-color: var(--color-brand-600);
+    color: #ffffff;
+    background-color: #312e81;
     cursor: pointer;
-    transition: color 0.2s, background-color 0.2s;
+    transition: all 0.2s ease-in-out;
+    box-shadow: var(--shadow-sm);
 
     &:hover {
-      background-color: var(--color-brand-700);
+      background-color: #4338ca;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(49, 46, 129, 0.4);
+    }
+
+    &:active {
+      transform: translateY(0);
+      background-color: #3730a3;
+      box-shadow: var(--shadow-sm);
     }
   }
 `;

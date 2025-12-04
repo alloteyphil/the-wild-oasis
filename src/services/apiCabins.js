@@ -1,74 +1,48 @@
-import supabase, { supabaseUrl } from "./supabase.js";
+import { convexHttpClient } from "./convexClient.js";
+import { api } from "../../convex/_generated/api";
+import { transformConvexDoc } from "./convexHelpers.js";
 
 export async function getCabins() {
-  const { data, error } = await supabase.from("cabins").select("*");
-
-  if (error) {
-    console.error(error);
-    throw new Error("Cabins could not be loaded.");
-  }
-  return data;
+  const result = await convexHttpClient.query(api.cabins.getCabins);
+  return transformConvexDoc(result);
 }
 
 export async function createEditCabin(newCabin, id) {
   const isEditSession = Boolean(id);
   const hasImagePath = Boolean(typeof newCabin.image === "string");
 
-  const imageName = `${Math.random()}-${newCabin.image.name}`.replaceAll(
-    "/",
-    ""
-  );
-  const imagePath = `${supabaseUrl}/storage/v1/object/public/cabin-images/${imageName}`;
+  let imageUrl = newCabin.image;
 
-  // 1. Create or edit the cabin
-  let query = supabase.from("cabins");
-  const newImage = hasImagePath ? newCabin.image : imagePath;
-
-  //A. CREATE
-  if (!isEditSession) query = query.insert([{ ...newCabin, image: newImage }]);
-
-  //B.EDIT
-  if (isEditSession)
-    query = query
-      .update({ ...newCabin, image: newImage })
-      .eq("id", id)
-      .select();
-
-  const { data, error } = await query.select().single();
-
-  if (error) {
-    console.error(error);
-    throw new Error(
-      `Cabins could not be ${isEditSession ? "edited" : "created"}!`
-    );
+  // If image is a file, upload it
+  if (!hasImagePath && newCabin.image) {
+    // Convex accepts Blob
+    const fileBlob = newCabin.image instanceof Blob 
+      ? newCabin.image 
+      : new Blob([newCabin.image]);
+    imageUrl = await convexHttpClient.mutation(api.files.uploadCabinImage, {
+      file: fileBlob,
+    });
   }
 
-  // 2) Upload the image if it isn't already uploaded
-  if (hasImagePath) return data;
+  const cabinData = {
+    name: newCabin.name,
+    maxCapacity: newCabin.maxCapacity,
+    regularPrice: newCabin.regularPrice,
+    discount: newCabin.discount,
+    image: imageUrl,
+    description: newCabin.description,
+  };
 
-  const { error: storageError } = await supabase.storage
-    .from("cabin-images")
-    .upload(imageName, newCabin.image);
+  const result = await convexHttpClient.mutation(api.cabins.createEditCabin, {
+    cabin: cabinData,
+    id: id || undefined,
+  });
 
-  //3.Delete the cabin if there was an error uploading image.
-  if (storageError) {
-    await supabase.from("cabins").delete().eq("id", data.id);
-    console.error(storageError);
-    throw new Error(
-      "Cabin image could not be uploaded and the cabin could not be created."
-    );
-  }
-
-  return data;
+  return transformConvexDoc(result);
 }
 
 export async function deleteCabin(id) {
-  const { data, error } = await supabase.from("cabins").delete().eq("id", id);
-
-  if (error) {
-    console.error(error);
-    throw new Error("Cabins could not be deleted.");
-  }
-
-  return data;
+  await convexHttpClient.mutation(api.cabins.deleteCabin, {
+    id,
+  });
 }

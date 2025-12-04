@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { login as loginApi } from "../../services/apiAuth.js";
+import { login as loginApi, hasAnyUsers } from "../../services/apiAuth.js";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
@@ -13,8 +13,23 @@ export function useLogin() {
       queryClient.setQueryData(["user"], user.user);
       navigate("/dashboard", { replace: true });
     },
-    onError: () => {
-      toast.error("Provided email and password are incorrect");
+    onError: async (error) => {
+      console.error("Login error:", error);
+      const errorMessage = error?.message || "An error occurred during login";
+      
+      // Check if no users exist to provide helpful message
+      try {
+        const usersExist = await hasAnyUsers();
+        if (!usersExist) {
+          toast.error("No admin account exists. Please create one first using the seed function.", {
+            duration: 5000,
+          });
+        } else {
+          toast.error(errorMessage);
+        }
+      } catch (err) {
+        toast.error(errorMessage);
+      }
     },
   });
 

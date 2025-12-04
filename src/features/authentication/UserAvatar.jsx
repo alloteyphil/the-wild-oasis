@@ -8,6 +8,15 @@ const StyledUserAvatar = styled.div`
   font-weight: 500;
   font-size: 1.4rem;
   color: var(--color-grey-600);
+
+  @media (max-width: 768px) {
+    font-size: 1.2rem;
+    gap: 0.8rem;
+
+    span {
+      display: none;
+    }
+  }
 `;
 
 const Avatar = styled.img`
@@ -23,7 +32,10 @@ const Avatar = styled.img`
 
 function UserAvatar() {
   const { user } = useUser();
-  const { fullName, avatar } = user.user_metadata;
+
+  if (!user) return null;
+
+  const { fullName, avatar } = user;
 
   return (
     <StyledUserAvatar>

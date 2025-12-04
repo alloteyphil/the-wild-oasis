@@ -111,6 +111,10 @@ const GlobalStyles = createGlobalStyle`
 
 html {
   font-size: 62.5%;
+
+  @media (max-width: 768px) {
+    font-size: 56.25%; /* 9px base for better mobile readability */
+  }
 }
 
 body {
@@ -121,6 +125,10 @@ body {
   min-height: 100vh;
   line-height: 1.5;
   font-size: 1.6rem;
+
+  @media (max-width: 768px) {
+    font-size: 1.4rem;
+  }
 }
 
 input,

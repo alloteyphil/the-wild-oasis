@@ -3,6 +3,7 @@ import Button from "../../ui/Button";
 import Form from "../../ui/Form";
 import FormRow from "../../ui/FormRow";
 import Input from "../../ui/Input";
+import Select from "../../ui/Select";
 import { useSignup } from "./useSignup.js";
 
 // Email regex: /\S+@\S+\.\S+/
@@ -12,8 +13,8 @@ function SignupForm() {
   const { register, formState, getValues, handleSubmit, reset } = useForm();
   const { errors } = formState;
 
-  function onSubmit({ fullName, email, password }) {
-    signup({ fullName, email, password }, { onSettled: () => reset() });
+  function onSubmit({ fullName, email, password, role }) {
+    signup({ fullName, email, password, role }, { onSettled: () => reset() });
   }
 
   return (
@@ -73,6 +74,20 @@ function SignupForm() {
         />
       </FormRow>
 
+      <FormRow label="Role" error={errors?.role?.message}>
+        <Select
+          id="role"
+          disabled={isLoading}
+          options={[
+            { value: "employee", label: "Employee" },
+            { value: "manager", label: "Manager" },
+            { value: "admin", label: "Admin" },
+          ]}
+          defaultValue="employee"
+          {...register("role", { required: "This field is required" })}
+        />
+      </FormRow>
+
       <FormRow>
         {/* type is an HTML attribute! */}
         <Button
@@ -83,7 +98,9 @@ function SignupForm() {
         >
           Cancel
         </Button>
-        <Button disabled={isLoading}>Create new user</Button>
+        <Button variation="accent" disabled={isLoading}>
+          Create new user
+        </Button>
       </FormRow>
     </Form>
   );

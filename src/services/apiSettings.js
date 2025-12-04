@@ -1,27 +1,15 @@
-import supabase from "./supabase";
+import { convexHttpClient } from "./convexClient.js";
+import { api } from "../../convex/_generated/api";
+import { transformConvexDoc } from "./convexHelpers.js";
 
 export async function getSettings() {
-  const { data, error } = await supabase.from("settings").select("*").single();
-
-  if (error) {
-    console.error(error);
-    throw new Error("Settings could not be loaded");
-  }
-  return data;
+  const result = await convexHttpClient.query(api.settings.getSettings);
+  return transformConvexDoc(result);
 }
 
-// We expect a newSetting object that looks like {setting: newValue}
 export async function updateSetting(newSetting) {
-  const { data, error } = await supabase
-    .from("settings")
-    .update(newSetting)
-    // There is only ONE row of settings, and it has the ID=1, and so this is the updated one
-    .eq("id", 1)
-    .single();
-
-  if (error) {
-    console.error(error);
-    throw new Error("Settings could not be updated");
-  }
-  return data;
+  const result = await convexHttpClient.mutation(api.settings.updateSetting, {
+    updates: newSetting,
+  });
+  return transformConvexDoc(result);
 }

@@ -1,73 +1,98 @@
-import supabase, { supabaseUrl } from "./supabase.js";
+import { convexHttpClient } from "./convexClient.js";
+import { api } from "../../convex/_generated/api";
+import { transformConvexDoc } from "./convexHelpers.js";
 
-export async function signup({ fullName, email, password }) {
-  const { data, error } = await supabase.auth.signUp({
+export async function hasAnyUsers() {
+  const result = await convexHttpClient.query(api.auth.hasAnyUsers);
+  return result;
+}
+
+export async function signup({ fullName, email, password, role }) {
+  // Get current user email (admin creating the user)
+  const currentUserEmail = localStorage.getItem("userEmail");
+  
+  const result = await convexHttpClient.mutation(api.auth.signup, {
     email,
     password,
-    options: {
-      data: {
         fullName,
-        avatar: "",
-      },
-    },
+    role: role || undefined,
+    createdByEmail: currentUserEmail || undefined,
   });
 
-  if (error) throw new Error(error.message);
-  return data;
+  // Store user email for subsequent requests (only if this is the current user signing up)
+  // For admin creating other users, don't change the session
+  if (result && result.email && email === currentUserEmail) {
+    localStorage.setItem("userEmail", email);
+    if (result.userId) {
+      localStorage.setItem("userId", result.userId);
+    }
+    // Return in format expected by useSignup hook
+    return { user: { ...result, role: result.role || "authenticated" } };
+  }
+  
+  // Return result for admin creating other users
+  return result;
 }
 
 export async function login({ email, password }) {
-  const { data, error } = await supabase.auth.signInWithPassword({
+  try {
+    const result = await convexHttpClient.mutation(api.auth.login, {
     email,
     password,
   });
 
-  if (error) throw new Error(error.message);
-  return data;
+    // Store user email for subsequent requests
+    if (result && result.user) {
+      localStorage.setItem("userEmail", email);
+      localStorage.setItem("userId", result.user._id || "");
+    }
+    
+    return result;
+  } catch (error) {
+    console.error("Login error:", error);
+    throw error;
+  }
 }
 
 export async function getCurrentUser() {
-  const { data: session } = await supabase.auth.getSession();
-  if (!session.session) return null;
+  const userEmail = localStorage.getItem("userEmail");
+  if (!userEmail) return null;
 
-  const { data, error } = await supabase.auth.getUser();
-
-  if (error) throw new Error(error.message);
-  return data?.user;
+  const user = await convexHttpClient.query(api.auth.getCurrentUser, {
+    email: userEmail,
+  });
+  return transformConvexDoc(user);
 }
 
 export async function logout() {
-  const { error } = await supabase.auth.signOut();
-  if (error) throw new Error(error.message);
+  localStorage.removeItem("userEmail");
+  localStorage.removeItem("userId");
 }
 
 export async function updateCurrentUser({ password, fullName, avatar }) {
-  // 1. Update password Or fullName
-  let updateData;
-  if (password) updateData = { password };
-  if (fullName) updateData = { data: { fullName } };
+  const userEmail = localStorage.getItem("userEmail");
+  const userId = localStorage.getItem("userId");
 
-  const { data, error } = await supabase.auth.updateUser(updateData);
+  if (!userEmail) {
+    throw new Error("User not authenticated");
+  }
 
-  if (error) throw new Error(error.message);
-  if (!avatar) return data;
+  // Handle avatar upload if provided
+  let avatarUrl = avatar;
+  if (avatar && typeof avatar !== "string" && userId) {
+    // Upload avatar file - Convex accepts Blob
+    avatarUrl = await convexHttpClient.mutation(api.files.uploadAvatar, {
+      file: avatar instanceof Blob ? avatar : new Blob([avatar]),
+      userId: userId,
+    });
+  }
 
-  // 2. Upload avatar image
-  const fileName = `avatar-${data.user.id}-${Math.random()}`;
-
-  const { error: storageError } = await supabase.storage
-    .from("avatars")
-    .upload(fileName, avatar);
-
-  if (storageError) throw new Error(storageError.message);
-
-  // 3. Update avatar in user
-  const { data: updatedUser, error: error2 } = await supabase.auth.updateUser({
-    data: {
-      avatar: `${supabaseUrl}/storage/v1/object/public/avatars/${fileName}`,
-    },
+  const result = await convexHttpClient.mutation(api.auth.updateUser, {
+    email: userEmail,
+    password,
+    fullName,
+    avatar: avatarUrl,
   });
 
-  if (error2) throw new Error(error2.message);
-  return updatedUser;
+  return { user: transformConvexDoc(result) };
 }

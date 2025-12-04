@@ -6,7 +6,7 @@ function CheckoutButton({ bookingId }) {
 
   return (
     <Button
-      variation="primary"
+      variation="accent"
       size="small"
       onClick={() => checkout(bookingId)}
       disabled={isCheckingOut}

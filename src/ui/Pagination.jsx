@@ -8,11 +8,23 @@ const StyledPagination = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 1.2rem;
+    align-items: stretch;
+  }
 `;
 
 const P = styled.p`
   font-size: 1.4rem;
   margin-left: 0.8rem;
+
+  @media (max-width: 768px) {
+    margin-left: 0;
+    text-align: center;
+    font-size: 1.2rem;
+  }
 
   & span {
     font-weight: 600;
@@ -22,23 +34,28 @@ const P = styled.p`
 const Buttons = styled.div`
   display: flex;
   gap: 0.6rem;
+
+  @media (max-width: 768px) {
+    justify-content: center;
+  }
 `;
 
 const PaginationButton = styled.button`
   background-color: ${(props) =>
-    props.active ? " var(--color-brand-600)" : "var(--color-grey-50)"};
-  color: ${(props) => (props.active ? " var(--color-brand-50)" : "inherit")};
+    props.active ? "#312e81" : "var(--color-grey-50)"};
+  color: ${(props) => (props.active ? "#ffffff" : "inherit")};
   border: none;
   border-radius: var(--border-radius-sm);
   font-weight: 500;
   font-size: 1.4rem;
+  box-shadow: var(--shadow-sm);
 
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.4rem;
   padding: 0.6rem 1.2rem;
-  transition: all 0.3s;
+  transition: all 0.2s ease-in-out;
 
   &:has(span:last-child) {
     padding-left: 0.4rem;
@@ -53,9 +70,26 @@ const PaginationButton = styled.button`
     width: 1.8rem;
   }
 
+  @media (max-width: 768px) {
+    font-size: 1.2rem;
+    padding: 0.5rem 1rem;
+
+    span {
+      display: none;
+    }
+  }
+
   &:hover:not(:disabled) {
-    background-color: var(--color-brand-600);
-    color: var(--color-brand-50);
+    background-color: #312e81;
+    color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(49, 46, 129, 0.3);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    background-color: #3730a3;
+    box-shadow: var(--shadow-sm);
   }
 `;
 

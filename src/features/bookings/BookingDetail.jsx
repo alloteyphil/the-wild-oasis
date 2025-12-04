@@ -24,6 +24,12 @@ const HeadingGroup = styled.div`
   align-items: center;
 `;
 
+const StyledButtonGroup = styled(ButtonGroup)`
+  margin-top: 3.2rem;
+  padding: 2.4rem 0;
+  margin-bottom: 2rem;
+`;
+
 function BookingDetail() {
   const { booking, isLoading } = useBooking();
   const { checkout, isCheckingOut } = useCheckout();
@@ -56,15 +62,22 @@ function BookingDetail() {
 
       <BookingDataBox booking={booking} />
 
-      <ButtonGroup>
+      <StyledButtonGroup>
         {status === "unconfirmed" && (
-          <Button onClick={() => navigate(`/checkin/${bookingId}`)}>
+          <Button
+            variation="accent"
+            onClick={() => navigate(`/checkin/${bookingId}`)}
+          >
             Check in
           </Button>
         )}
 
         {status === "checked-in" && (
-          <Button onClick={() => checkout(bookingId)} disabled={isCheckingOut}>
+          <Button
+            variation="accent"
+            onClick={() => checkout(bookingId)}
+            disabled={isCheckingOut}
+          >
             Check out
           </Button>
         )}
@@ -90,7 +103,7 @@ function BookingDetail() {
         <Button variation="secondary" onClick={moveBack}>
           Back
         </Button>
-      </ButtonGroup>
+      </StyledButtonGroup>
     </>
   );
 }

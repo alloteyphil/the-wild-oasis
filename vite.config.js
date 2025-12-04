@@ -8,12 +8,6 @@ dotenv.config();
 export default defineConfig(({ mode }) => {
   return {
     plugins: [react()],
-    define: {
-      "process.env.REACT_APP_API_KEY": JSON.stringify(
-        // eslint-disable-next-line no-undef
-        process.env.REACT_APP_API_KEY
-      ),
-      // Add other environment variables here as needed
-    },
+    // Convex URL will be set via VITE_CONVEX_URL environment variable
   };
 });

@@ -4,10 +4,14 @@ import Row from "../ui/Row.jsx";
 
 function Settings() {
   return (
+    <>
+      <Row type="horizontal">
+        <Heading as="h1">Update hotel settings</Heading>
+      </Row>
     <Row>
-      <Heading as="h1">Update hotel settings</Heading>
       <UpdateSettingsForm />
     </Row>
+    </>
   );
 }
 
